@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.cdtime.lifecapsule.meta.theme.dao.ThemeDao">
+    <!--配置表和对象的字段映射 -->
+    <resultMap id="themeMap" type="cc.cdtime.lifecapsule.meta.theme.entity.Theme">
+        <result property="themeId" column="theme_id"/>
+        <result property="themeName" column="theme_name"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="blockDark" column="block_dark"/>
+        <result property="blockLight" column="block_light"/>
+        <result property="textLight" column="text_light"/>
+        <result property="textDark" column="text_dark"/>
+        <result property="textHolder" column="text_holder"/>
+        <result property="colorDark" column="color_dark"/>
+        <result property="colorDark2" column="color_dark2"/>
+        <result property="colorLight" column="color_light"/>
+        <result property="colorLight2" column="color_light2"/>
+        <result property="colorMedium" column="color_medium"/>
+        <result property="colorMedium2" column="color_medium2"/>
+        <result property="themeType" column="theme_type"/>
+        <result property="colorDanger" column="color_danger"/>
+        <result property="colorDanger2" column="color_danger2"/>
+    </resultMap>
+
+    <!--创建一个主题-->
+    <insert id="createTheme"
+            useGeneratedKeys="true"
+            parameterType="cc.cdtime.lifecapsule.meta.theme.entity.Theme">
+        insert into theme
+        (theme_id, theme_name, create_time, create_user_id,
+         background, block_dark, block_light,
+         text_dark, text_light, text_holder,
+         color_dark, color_light, color_medium,
+         status, theme_type, color_danger, color_danger2,
+         color_dark2, color_medium2, color_light2,
+         color1, color2, color3, color4)
+        values (#{themeId}, #{themeName}, #{createTime}, #{createUserId},
+                #{background}, #{blockDark}, #{blockLight},
+                #{textDark}, #{textLight}, #{textHolder},
+                #{colorDark}, #{colorLight}, #{colorMedium},
+                #{status}, #{themeType}, #{colorDanger}, #{colorDanger2},
+                #{colorDark2}, #{colorMedium2}, #{colorLight2},
+                #{color1}, #{color2}, #{color3}, #{color4})
+    </insert>
+
+    <!--读取一个主题-->
+    <select id="getTheme" parameterType="map" resultMap="themeMap">
+        select * from theme
+        where 1=1
+        <choose>
+            <when test="themeId!=null">
+                and theme_id=#{themeId}
+            </when>
+        </choose>
+        <choose>
+            <when test="defaultTheme">
+                and theme_type=#{themeType}
+                and status='DEFAULT'
+            </when>
+        </choose>
+    </select>
+
+    <select id="listTheme" parameterType="map" resultMap="themeMap">
+        select *
+        from theme
+        where 1 = 1
+        <choose>
+            <when test="themeType!=null">
+                and theme_type=#{themeType}
+            </when>
+        </choose>
+        <choose>
+            <when test="themeId!=null">
+                and theme_id=#{themeId}
+            </when>
+        </choose>
+        order by create_time desc
+    </select>
+
+    <update id="updateTheme" parameterType="map">
+        update theme
+        <set>
+            <if test="background!=null">
+                background=#{background},
+            </if>
+            <if test="blockDark!=null">
+                block_dark=#{blockDark},
+            </if>
+            <if test="blockLight!=null">
+                block_light=#{blockLight},
+            </if>
+            <if test="textDark!=null">
+                text_dark=#{textDark},
+            </if>
+            <if test="textLight!=null">
+                text_light=#{textLight},
+            </if>
+            <if test="textHolder!=null">
+                text_holder=#{textHolder},
+            </if>
+            <if test="colorDanger!=null">
+                color_danger=#{colorDanger},
+            </if>
+            <if test="colorDanger2!=null">
+                color_danger2=#{colorDanger2},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="colorDark!=null">
+                color_dark=#{colorDark},
+            </if>
+            <if test="colorDark2!=null">
+                color_dark2=#{colorDark2},
+            </if>
+            <if test="colorMedium!=null">
+                color_medium=#{colorMedium},
+            </if>
+            <if test="colorMedium2!=null">
+                color_medium2=#{colorMedium2},
+            </if>
+            <if test="colorLight!=null">
+                color_light=#{colorLight},
+            </if>
+            <if test="colorLight2!=null">
+                color_light2=#{colorLight2},
+            </if>
+            <if test="color1!=null">
+                color1=#{color1},
+            </if>
+            <if test="color2!=null">
+                color2=#{color2},
+            </if>
+            <if test="color3!=null">
+                color3=#{color3},
+            </if>
+            <if test="color4!=null">
+                color4=#{color4},
+            </if>
+            <if test="themeName!=null">
+                theme_name=#{themeName}
+            </if>
+        </set>
+        where theme_id=#{themeId}
+    </update>
+
+    <update id="setAllThemeStatusToActive" parameterType="map">
+        update theme
+        set status='ACTIVE'
+        where status = 'DEFAULT'
+          and theme_type = #{themeType}
+    </update>
+
+    <delete id="deleteTheme" parameterType="java.lang.String">
+        delete
+        from theme
+        where theme_id = #{themeId}
+    </delete>
+</mapper>

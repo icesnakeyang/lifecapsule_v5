@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.cdtime.lifecapsule.meta.note.dao.NoteDao">
+    <!--配置表和对象的字段映射 -->
+    <resultMap id="noteMap" type="cc.cdtime.lifecapsule.meta.note.entity.NoteView">
+        <result property="noteId" column="note_id"/>
+        <result property="userId" column="user_Id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="userId" column="user_id"/>
+        <result property="noteType" column="note_type"/>
+        <result property="userEncodeKey" column="user_encode_key"/>
+    </resultMap>
+
+    <!--创建一个笔记信息-->
+    <insert id="createNoteInfo"
+            useGeneratedKeys="true"
+            parameterType="cc.cdtime.lifecapsule.meta.note.entity.NoteInfo">
+        insert into note_info
+        (note_id, user_id, title,
+         create_time, status, encrypt,
+         pid, note_type)
+        values (#{noteId}, #{userId}, #{title},
+                #{createTime}, #{status}, #{encrypt},
+                #{pid}, #{noteType})
+    </insert>
+
+    <!--查询一条笔记简要信息-->
+    <select id="getNoteInfo" parameterType="java.lang.String" resultMap="noteMap">
+        select *
+        from note_info
+        where note_id = #{noteId}
+    </select>
+
+    <!--查询笔记列表-->
+    <select id="listNoteInfo" parameterType="map" resultMap="noteMap">
+        select n.ids,
+        n.note_id,
+        n.user_id,
+        title,
+        n.create_time,
+        status,
+        encrypt,
+        nickname
+        from note_info n
+        left join user_base ub on n.user_id = ub.user_id
+        where 1 = 1
+        <choose>
+            <when test="userId!=null">
+                and n.user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="searchKey!=null">
+                and title ilike concat('%',#{searchKey}, '%')
+            </when>
+        </choose>
+        <choose>
+            <when test="tagList!=null">
+                and n.note_id in (
+                select note_id
+                from tag_note tn
+                left join tag_base tb on tn.tag_id = tb.tag_id
+                where tn.user_id = #{userId}
+                and tag_name in
+                <foreach collection="tagList" item="item" separator="," open="(" close=")" index="">
+                    #{item.tagName}
+                </foreach>
+                )
+            </when>
+        </choose>
+        <choose>
+            <when test="noteType!=null">
+                and note_type=#{noteType}
+            </when>
+            <otherwise>
+                and note_type is null
+            </otherwise>
+        </choose>
+        order by create_time desc
+        <choose>
+            <when test="offset!=null">
+                limit #{size} offset #{offset}
+            </when>
+        </choose>
+    </select>
+
+    <!--统计笔记数量-->
+    <select id="totalNoteInfo" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from note_info
+        where 1=1
+        <choose>
+            <when test="userId!=null">
+                and user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="keyword!=null">
+                and title ilike concat('%',#{keyword}, '%')
+            </when>
+        </choose>
+        <choose>
+            <when test="tagList!=null">
+                and note_id in (
+                select note_id
+                from tag_note tn
+                left join tag_base tb on tn.tag_id = tb.tag_id
+                where tn.user_id = #{userId}
+                and tag_name in
+                <foreach collection="tagList" item="item" separator="," open="(" close=")" index="">
+                    #{item.tagName}
+                </foreach>
+                )
+            </when>
+        </choose>
+        <choose>
+            <when test="noteType!=null">
+                and note_type=#{noteType}
+            </when>
+            <otherwise>
+                and note_type is null
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--修改笔记-->
+    <update id="updateNoteInfo" parameterType="map">
+        update note_info
+        <set>
+            <if test="title!=null">
+                title=#{title},
+            </if>
+            <if test="encrypt!=null">
+                encrypt=#{encrypt},
+            </if>
+            <if test="userEncodeKey!=null">
+                user_encode_key=#{userEncodeKey}
+            </if>
+        </set>
+        where note_id=#{noteId}
+    </update>
+
+    <!--物理删除笔记-->
+    <delete id="deleteNoteInfo" parameterType="java.lang.String">
+        delete
+        from note_info
+        where note_id = #{noteId}
+    </delete>
+
+    <!--查询创建了触发器的笔记列表-->
+    <select id="listNoteTrigger" parameterType="java.lang.String" resultMap="noteMap">
+        select *
+        from note_info
+        where note_id in (select note_id
+                          from note_recipient
+                          where recipient_id in (select note_trigger.recipient_id
+                                                 from note_trigger
+                                                 where 1 = 1
+                                                   and user_id = #{userId}))
+    </select>
+
+    <!--查询历史笔记-->
+    <select id="listHistoryNote" parameterType="map" resultMap="noteMap">
+        select * from note_info
+        where 1=1
+        <choose>
+            <when test="createTimeStart!=null">
+                and create_time &gt;=#{createTimeStart}
+            </when>
+        </choose>
+        <choose>
+            <when test="createTimeEnd!=null">
+                and create_time &lt;=#{createTimeEnd}
+            </when>
+        </choose>
+        <choose>
+            <when test="userId!=null">
+                and user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="titleKey!=null">
+                and title ilike concat('%', #{titleKey},'%')
+            </when>
+        </choose>
+        <choose>
+            <when test="noteType!=null">
+                and note_type=#{noteType}
+            </when>
+            <otherwise>
+                and note_type is null
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--随机查询笔记-->
+    <select id="listHistoryRandom" parameterType="map" resultMap="noteMap">
+        select *
+        from note_info
+        where user_id = #{userId}
+        <choose>
+            <when test="noteType!=null">
+                and note_type=#{noteType}
+            </when>
+            <otherwise>
+                and note_type is null
+            </otherwise>
+        </choose>
+        order by random() limit #{size}
+    </select>
+</mapper>

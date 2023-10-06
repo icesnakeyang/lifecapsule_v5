@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.cdtime.lifecapsule.meta.noteSendLog.dao.NoteSendDao">
+    <!--配置表和对象的字段映射 -->
+    <resultMap id="noteSendMap" type="cc.cdtime.lifecapsule.meta.noteSendLog.entity.NoteSendLogView">
+        <result property="sendLogId" column="send_log_id"/>
+        <result property="sendUserId" column="send_user_id"/>
+        <result property="receiveUserId" column="receive_user_id"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="readTime" column="read_time"/>
+        <result property="sendLoginName" column="send_login_name"/>
+        <result property="receiveLoginName" column="receive_login_name"/>
+        <result property="userEncodeKey" column="encode_key"/>
+        <result property="sendUserNickname" column="send_user_nickname"/>
+        <result property="receiveUserNickname" column="receive_user_nickname"/>
+        <result property="sendPhone" column="send_phone"/>
+        <result property="sendEmail" column="send_email"/>
+        <result property="recipientId" column="recipient_id"/>
+        <result property="triggerType" column="trigger_type"/>
+        <result property="recipientName" column="recipient_name"/>
+        <result property="toName" column="to_name"/>
+        <result property="toEmail" column="to_email"/>
+        <result property="recipientTitle" column="recipient_title"/>
+        <result property="receiveUserName" column="receive_user_name"/>
+        <result property="refPid" column="ref_pid"/>
+        <result property="fromName" column="from_name"/>
+        <result property="triggerId" column="trigger_id"/>
+    </resultMap>
+
+    <!--创建一个笔记发送记录-->
+    <insert id="createNoteSendLog"
+            useGeneratedKeys="true"
+            parameterType="cc.cdtime.lifecapsule.meta.noteSendLog.entity.NoteSendLog">
+        insert into note_send_log
+        (send_user_id, receive_user_id,
+         send_time,
+         send_log_id, to_email,
+         title, recipient_id, trigger_type,
+         ref_pid, trigger_id, from_name, to_name)
+        values (#{sendUserId}, #{receiveUserId},
+                #{sendTime},
+                #{sendLogId}, #{toEmail},
+                #{title}, #{recipientId}, #{triggerType},
+                #{refPid}, #{triggerId}, #{fromName}, #{toName})
+    </insert>
+
+    <!--读取主动发送笔记记录列表-->
+    <select id="listNoteSendLog" parameterType="map" resultMap="noteSendMap">
+        select * from note_send_log
+        where 1 = 1
+        <choose>
+            <when test="sendUserId!=null">
+                and send_user_id=#{sendUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="receiveUserId!=null">
+                and receive_user_id=#{receiveUserId}
+            </when>
+        </choose>
+        order by send_time desc
+        limit #{size} offset #{offset}
+    </select>
+
+    <select id="totalNoteSendLog" parameterType="map" resultType="java.lang.Integer">
+        select count(ids) as total from note_send_log
+        where 1=1
+        <choose>
+            <when test="sendUserId!=null">
+                and send_user_id=#{sendUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="receiveUserId!=null">
+                and receive_user_id=#{receiveUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="unread">
+                and read_time is null
+            </when>
+        </choose>
+    </select>
+
+    <select id="getNoteSendLog" parameterType="map" resultMap="noteSendMap">
+        select *
+        from note_send_log
+        where 1=1
+        <choose>
+            <when test="sendLogId!=null">
+                and send_log_id = #{sendLogId}
+            </when>
+        </choose>
+        <choose>
+            <when test="triggerId!=null">
+                and trigger_id=#{triggerId}
+            </when>
+        </choose>
+    </select>
+
+    <update id="updateNoteSendLog" parameterType="map">
+        update note_send_log
+        set read_time=#{readTime}
+        where send_log_id = #{sendLogId}
+    </update>
+
+    <!--物理删除一个发送的笔记-->
+    <delete id="deleteNoteSendLog" parameterType="map">
+        delete
+        from note_send_log
+        where send_log_id = #{sendLogId}
+    </delete>
+</mapper>

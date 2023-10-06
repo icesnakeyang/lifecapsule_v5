@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.cdtime.lifecapsule.meta.userAct.dao.UserActDao">
+    <!--配置表和对象的字段映射 -->
+    <resultMap id="userActMap" type="cc.cdtime.lifecapsule.meta.userAct.entity.UserActView">
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="actType" column="act_type"/>
+    </resultMap>
+
+    <!--记录用户行为日志-->
+    <insert id="createUserAct"
+            useGeneratedKeys="true"
+            parameterType="cc.cdtime.lifecapsule.meta.userAct.entity.UserAct">
+        insert into user_act
+        (create_time, act_type, result,
+         memo, user_id)
+        values (#{createTime}, #{actType}, #{result},
+                #{memo}, #{userId})
+    </insert>
+
+    <select id="totalUserAct" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total
+        from user_act ua
+        left join user_base ub on ua.user_id = ub.user_id
+        where 1 = 1
+        <choose>
+            <when test="logStartTime!=null">
+                <![CDATA[
+                and ua.create_time > #{logStartTime}
+                        ]]>
+            </when>
+        </choose>
+        <choose>
+            <when test="logEndTime!=null">
+                <![CDATA[
+                and ua.create_time <#{logEndTime}
+                 ]]>
+            </when>
+        </choose>
+        <choose>
+            <when test="nickname!=null">
+                and nickname ilike concat('%', #{nickname}, '%')
+            </when>
+        </choose>
+    </select>
+
+    <!--查询用户行为日志列表-->
+    <select id="listUserAct" parameterType="map" resultMap="userActMap">
+        select ua.ids,
+        ua.create_time,
+        act_type,
+        result,
+        memo,
+        ua.user_id,
+        nickname,
+        email
+        from user_act ua
+        left join user_base ub on ua.user_id = ub.user_id
+        left join user_email ue on ua.user_id = ue.user_id
+        where 1 = 1
+        <choose>
+            <when test="logStartTime!=null">
+                <![CDATA[
+                and ua.create_time >= #{logStartTime}
+                        ]]>
+            </when>
+        </choose>
+        <choose>
+            <when test="logEndTime!=null">
+                <![CDATA[
+                and ua.create_time <#{logEndTime}
+                 ]]>
+            </when>
+        </choose>
+        <choose>
+            <when test="nickname!=null">
+                and nickname ilike concat('%', #{nickname}, '%')
+            </when>
+        </choose>
+        order by ua.ids desc
+        limit #{size} offset #{offset}
+    </select>
+</mapper>

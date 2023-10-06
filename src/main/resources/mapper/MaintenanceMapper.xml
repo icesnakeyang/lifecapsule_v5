@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.cdtime.lifecapsule.meta.maintenance.MaintenanceDao">
+    <!--配置表和对象的字段映射 -->
+    <resultMap id="userMap" type="cc.cdtime.lifecapsule.meta.user.entity.UserView">
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="tokenTime" column="token_time"/>
+        <result property="loginName" column="login_name"/>
+        <result property="deviceId" column="device_id"/>
+    </resultMap>
+
+    <resultMap id="noteMap" type="cc.cdtime.lifecapsule.meta.note.entity.NoteView">
+        <result property="noteId" column="note_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userEncodeKey" column="user_encode_key"/>
+    </resultMap>
+
+    <select id="listNoteOld" resultMap="noteMap">
+        select *
+        from note_old
+    </select>
+
+    <select id="listUserOld" resultMap="userMap">
+        select *
+        from user_old
+    </select>
+
+    <update id="updateNoteOld" parameterType="map">
+        update note
+        <set>
+            <if test="noteId!=null">
+                note_id=#{noteId}
+            </if>
+        </set>
+        where ids=#{ids}
+    </update>
+
+    <select id="listAllNote" resultMap="noteMap">
+        select *
+        from note_info
+    </select>
+</mapper>

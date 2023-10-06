@@ -1,0 +1,28 @@
+package cc.cdtime.lifecapsule.meta.noteSendLog.entity;
+
+import lombok.Data;
+
+import java.util.Date;
+
+/**
+ * 主动发送笔记日志
+ */
+@Data
+public class NoteSendLog {
+    private Integer ids;
+    private String sendLogId;
+    private String sendUserId;
+    private String receiveUserId;
+    private Date sendTime;
+    private Date readTime;
+    private String noteContent;
+    private String toEmail;
+    private String title;
+    private String triggerType;
+    private String recipientId;
+    private String userEncodeKey;
+    private String refPid;
+    private String triggerId;
+    private String fromName;
+    private String toName;
+}
