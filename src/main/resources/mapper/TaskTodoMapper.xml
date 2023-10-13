@@ -33,6 +33,11 @@
         </choose>
         <choose>
             <when test="complete!=null">
+                and complete is true
+            </when>
+        </choose>
+        <choose>
+            <when test="notComplete!=null">
                 and complete is false
             </when>
         </choose>
@@ -65,6 +70,11 @@
         </choose>
         <choose>
             <when test="complete!=null">
+                and complete is true
+            </when>
+        </choose>
+        <choose>
+            <when test="notComplete!=null">
                 and complete is false
             </when>
         </choose>

@@ -48,7 +48,15 @@ public class TaskTodoBService implements ITaskTodoBService {
         qIn.put("size", pageSize);
         if (hideComplete != null) {
             if (hideComplete) {
-                qIn.put("complete", false);
+                /**
+                 * 用户选择了隐藏已完成任务
+                 * 查询complete = false
+                 */
+                qIn.put("notComplete", true);
+            } else {
+                /**
+                 * 用户没有选择隐藏已完成任务，查询所有任务
+                 */
             }
         }
         qIn.put("projectId", projectId);
