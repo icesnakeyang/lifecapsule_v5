@@ -1,5 +1,6 @@
 package cc.cdtime.lifecapsule.web.note;
 
+import cc.cdtime.lifecapsule.app.loveLetter.LoveLetterRequest;
 import cc.cdtime.lifecapsule.framework.common.ICommonService;
 import cc.cdtime.lifecapsule.framework.constant.ESTags;
 import cc.cdtime.lifecapsule.framework.vo.NoteRequest;
@@ -155,10 +156,6 @@ public class WebNoteController {
     /**
      * web端用户读取自己的note发送和接收统计信息
      * 未读note数
-     *
-     * @param request
-     * @param httpServletRequest
-     * @return
      */
     @ResponseBody
     @GetMapping("/loadMyNoteSendStatistic")
@@ -209,6 +206,101 @@ public class WebNoteController {
                 response.setCode(10001);
                 log.error("Web saveMyNoteTags error:" + ex.getMessage());
             }
+        }
+        return response;
+    }
+
+    /**
+     * Web用户查询自己的情书列表
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listLoveLetter")
+    public Response listLoveLetter(@RequestBody LoveLetterRequest request,
+                                   HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+
+            logMap.put("UserActType", ESTags.LIST_LOVE_LETTER);
+            logMap.put("token", token);
+
+            Map out = iWebNoteBService.listLoveLetter(in);
+            response.setData(out);
+
+            logMap.put("result", ESTags.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                log.error("Web listLoveLetter error:" + ex.getMessage());
+            }
+            logMap.put("result", ESTags.FAIL);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            log.error("Web listLoveLetter user act error:" + ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * Web用户查询自己的情书详情
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getLoveLetter")
+    public Response getLoveLetter(@RequestBody LoveLetterRequest request,
+                                  HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("noteId", request.getNoteId());
+            in.put("encryptKey", request.getEncryptKey());
+            in.put("keyToken", request.getKeyToken());
+
+            logMap.put("UserActType", ESTags.GET_LOVE_LETTER);
+            logMap.put("token", token);
+
+            Map out = iWebNoteBService.getLoveLetter(in);
+            response.setData(out);
+
+            logMap.put("result", ESTags.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                log.error("Web getLoveLetter error:" + ex.getMessage());
+            }
+            logMap.put("result", ESTags.FAIL);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            log.error("Web getLoveLetter user act error:" + ex3.getMessage());
         }
         return response;
     }

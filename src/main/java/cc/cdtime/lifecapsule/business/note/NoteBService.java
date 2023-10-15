@@ -60,7 +60,9 @@ public class NoteBService implements INoteBService {
         if (tagList != null && tagList.size() > 0) {
             qIn.put("tagList", tagList);
         }
-        qIn.put("searchKey", searchKey);
+        if (searchKey != null && !searchKey.equals("")) {
+            qIn.put("searchKey", searchKey);
+        }
         ArrayList<NoteView> noteViews = iNoteMiddle.listNote(qIn);
         Integer total = iNoteMiddle.totalNote(qIn);
         Map out = new HashMap();

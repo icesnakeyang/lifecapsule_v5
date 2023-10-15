@@ -525,7 +525,6 @@ public class TriggerBService implements ITriggerBService {
          */
         String strAESKey = null;
         if (encryptKey != null && !encryptKey.equals("")) {
-            strAESKey = null;
             String privateKey = iSecurityMiddle.getRSAKey(keyToken);
             strAESKey = GogoTools.decryptRSAByPrivateKey(encryptKey, privateKey);
             iSecurityMiddle.deleteRSAKey(keyToken);

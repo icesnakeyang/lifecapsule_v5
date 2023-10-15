@@ -1,7 +1,9 @@
 package cc.cdtime.lifecapsule.web.note;
 
+import cc.cdtime.lifecapsule.business.loveLetter.ILoveLetterBService;
 import cc.cdtime.lifecapsule.business.note.INoteBService;
 import cc.cdtime.lifecapsule.business.noteSend.INoteSendBService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -10,11 +12,14 @@ import java.util.Map;
 public class WebNoteBService implements IWebNoteBService {
     private final INoteBService iNoteBService;
     private final INoteSendBService iNoteSendBService;
+    private final ILoveLetterBService iLoveLetterBService;
 
     public WebNoteBService(INoteBService iNoteBService,
-                           INoteSendBService iNoteSendBService) {
+                           INoteSendBService iNoteSendBService,
+                           ILoveLetterBService iLoveLetterBService) {
         this.iNoteBService = iNoteBService;
         this.iNoteSendBService = iNoteSendBService;
+        this.iLoveLetterBService = iLoveLetterBService;
     }
 
     @Override
@@ -49,5 +54,17 @@ public class WebNoteBService implements IWebNoteBService {
     @Override
     public void saveMyNoteTags(Map in) throws Exception {
         iNoteBService.saveMyNoteTags(in);
+    }
+
+    @Override
+    public Map listLoveLetter(Map in) throws Exception {
+        Map out = iLoveLetterBService.listLoveLetter(in);
+        return out;
+    }
+
+    @Override
+    public Map getLoveLetter(Map in) throws Exception {
+        Map out = iLoveLetterBService.getLoveLetter(in);
+        return out;
     }
 }
