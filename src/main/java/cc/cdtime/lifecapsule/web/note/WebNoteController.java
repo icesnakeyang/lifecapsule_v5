@@ -1,5 +1,6 @@
 package cc.cdtime.lifecapsule.web.note;
 
+import cc.cdtime.lifecapsule.app.lastWords.LastWordsRequest;
 import cc.cdtime.lifecapsule.app.loveLetter.LoveLetterRequest;
 import cc.cdtime.lifecapsule.framework.common.ICommonService;
 import cc.cdtime.lifecapsule.framework.constant.ESTags;
@@ -230,6 +231,7 @@ public class WebNoteController {
             in.put("token", token);
             in.put("pageIndex", request.getPageIndex());
             in.put("pageSize", request.getPageSize());
+            in.put("searchKey", request.getSearchKey());
 
             logMap.put("UserActType", ESTags.LIST_LOVE_LETTER);
             logMap.put("token", token);
@@ -301,6 +303,99 @@ public class WebNoteController {
             iCommonService.createUserActLog(logMap);
         } catch (Exception ex3) {
             log.error("Web getLoveLetter user act error:" + ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 用户创建或者修改一封情书
+     */
+    @ResponseBody
+    @PostMapping("/saveLoveLetter")
+    public Response saveLoveLetter(@RequestBody LoveLetterRequest request,
+                                   HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("toEmail", request.getToEmail());
+            in.put("content", request.getContent());
+            in.put("encryptKey", request.getEncryptKey());
+            in.put("keyToken", request.getKeyToken());
+            in.put("title", request.getTitle());
+            in.put("toName", request.getToName());
+            in.put("fromName", request.getFromName());
+            in.put("noteId", request.getNoteId());
+            in.put("sendDateTime", request.getSendDateTime());
+
+            logMap.put("token", token);
+            logMap.put("UserActType", ESTags.SAVE_LOVE_LETTER);
+
+            memoMap.put("title", request.getTitle());
+
+            iWebNoteBService.saveLoveLetter(in);
+
+            logMap.put("result", ESTags.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                log.error("Web saveLoveLetter error:" + ex.getMessage());
+            }
+            logMap.put("result", ESTags.FAIL);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            log.error("Web saveLoveLetter user act error:" + ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 用户删除自己的情书
+     */
+    @ResponseBody
+    @PostMapping("/deleteMyLoveLetter")
+    public Response deleteMyLoveLetter(@RequestBody LastWordsRequest request,
+                                       HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("noteId", request.getNoteId());
+
+            logMap.put("token", token);
+            logMap.put("UserActType", ESTags.DELETE_LOVE_LETTER);
+            memoMap.put("noteId", request.getNoteId());
+
+            iWebNoteBService.deleteMyLoveLetter(in);
+
+            logMap.put("result", ESTags.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                log.error("Web deleteMyLoveLetter error:" + ex.getMessage());
+            }
+            logMap.put("result", ESTags.FAIL);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            log.error("Web deleteMyLoveLetter user act error:" + ex3.getMessage());
         }
         return response;
     }

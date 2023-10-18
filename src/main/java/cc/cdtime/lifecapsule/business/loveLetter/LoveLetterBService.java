@@ -41,6 +41,7 @@ public class LoveLetterBService implements ILoveLetterBService {
         String token = in.get("token").toString();
         Integer pageIndex = (Integer) in.get("pageIndex");
         Integer pageSize = (Integer) in.get("pageSize");
+        String searchKey = (String) in.get("searchKey");
 
         Map qIn = new HashMap();
         qIn.put("token", token);
@@ -52,10 +53,13 @@ public class LoveLetterBService implements ILoveLetterBService {
         Integer offset = (pageIndex - 1) * pageSize;
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
+        qIn.put("searchKey", searchKey);
         ArrayList<NoteView> noteViews = iNoteMiddle.listNote(qIn);
+        Integer totalNote = iNoteMiddle.totalNote(qIn);
 
         Map out = new HashMap();
         out.put("noteList", noteViews);
+        out.put("totalNote", totalNote);
 
         return out;
     }

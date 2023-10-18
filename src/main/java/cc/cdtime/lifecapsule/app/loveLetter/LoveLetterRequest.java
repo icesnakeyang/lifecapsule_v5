@@ -16,4 +16,5 @@ public class LoveLetterRequest extends Request {
     private String toName;
     private String fromName;
     private Date sendDateTime;
+    private String searchKey;
 }
