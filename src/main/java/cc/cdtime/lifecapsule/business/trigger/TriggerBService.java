@@ -7,14 +7,12 @@ import cc.cdtime.lifecapsule.meta.contact.entity.ContactView;
 import cc.cdtime.lifecapsule.meta.email.entity.UserEmailView;
 import cc.cdtime.lifecapsule.meta.note.entity.NoteView;
 import cc.cdtime.lifecapsule.meta.noteSendLog.entity.NoteSendLogView;
-import cc.cdtime.lifecapsule.meta.recipient.entity.RecipientView;
 import cc.cdtime.lifecapsule.meta.trigger.entity.NoteTrigger;
 import cc.cdtime.lifecapsule.meta.trigger.entity.TriggerView;
 import cc.cdtime.lifecapsule.meta.user.entity.UserView;
 import cc.cdtime.lifecapsule.middle.contact.IContactMiddle;
 import cc.cdtime.lifecapsule.middle.note.INoteMiddle;
 import cc.cdtime.lifecapsule.middle.noteSend.INoteSendMiddle;
-import cc.cdtime.lifecapsule.middle.recipient.IRecipientMiddle;
 import cc.cdtime.lifecapsule.middle.security.ISecurityMiddle;
 import cc.cdtime.lifecapsule.middle.trigger.ITriggerMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
@@ -31,7 +29,6 @@ public class TriggerBService implements ITriggerBService {
     private final IUserMiddle iUserMiddle;
     private final ITriggerMiddle iTriggerMiddle;
     private final INoteMiddle iNoteMiddle;
-    private final IRecipientMiddle iRecipientMiddle;
     private final IContactMiddle iContactMiddle;
     private final ISecurityMiddle iSecurityMiddle;
     private final INoteSendMiddle iNoteSendMiddle;
@@ -39,14 +36,12 @@ public class TriggerBService implements ITriggerBService {
     public TriggerBService(IUserMiddle iUserMiddle,
                            ITriggerMiddle iTriggerMiddle,
                            INoteMiddle iNoteMiddle,
-                           IRecipientMiddle iRecipientMiddle,
                            IContactMiddle iContactMiddle,
                            ISecurityMiddle iSecurityMiddle,
                            INoteSendMiddle iNoteSendMiddle) {
         this.iUserMiddle = iUserMiddle;
         this.iTriggerMiddle = iTriggerMiddle;
         this.iNoteMiddle = iNoteMiddle;
-        this.iRecipientMiddle = iRecipientMiddle;
         this.iContactMiddle = iContactMiddle;
         this.iSecurityMiddle = iSecurityMiddle;
         this.iNoteSendMiddle = iNoteSendMiddle;
@@ -62,7 +57,6 @@ public class TriggerBService implements ITriggerBService {
         Date triggerTime = (Date) in.get("triggerTime");
         String triggerId = (String) in.get("triggerId");
         String fromName = (String) in.get("fromName");
-        String recipientId = (String) in.get("recipientId");
 
         Map qIn = new HashMap();
         qIn.put("token", token);
@@ -115,8 +109,7 @@ public class TriggerBService implements ITriggerBService {
             /**
              * 新增触发器
              */
-            RecipientView recipientView = iRecipientMiddle.getRecipient(recipientId, false, userView.getUserId());
-            NoteView noteView = iNoteMiddle.getNoteTiny(recipientView.getNoteId(), false, userView.getUserId());
+            NoteView noteView = iNoteMiddle.getNoteTiny(noteId, false, userView.getUserId());
             NoteTrigger trigger = new NoteTrigger();
             trigger.setTriggerId(GogoTools.UUID32());
             trigger.setCreateTime(new Date());
@@ -125,7 +118,6 @@ public class TriggerBService implements ITriggerBService {
             trigger.setTriggerType(triggerType);
             trigger.setRemark(remark);
             trigger.setTriggerTime(triggerTime);
-            trigger.setRecipientId(recipientView.getRecipientId());
             trigger.setStatus(ESTags.ACTIVE.toString());
 
             iTriggerMiddle.createTrigger(trigger);

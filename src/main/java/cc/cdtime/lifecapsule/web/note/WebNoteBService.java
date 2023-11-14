@@ -55,26 +55,4 @@ public class WebNoteBService implements IWebNoteBService {
     public void saveMyNoteTags(Map in) throws Exception {
         iNoteBService.saveMyNoteTags(in);
     }
-
-    @Override
-    public Map listLoveLetter(Map in) throws Exception {
-        Map out = iLoveLetterBService.listLoveLetter(in);
-        return out;
-    }
-
-    @Override
-    public Map getLoveLetter(Map in) throws Exception {
-        Map out = iLoveLetterBService.getLoveLetter(in);
-        return out;
-    }
-
-    @Override
-    public void saveLoveLetter(Map in) throws Exception {
-        iLoveLetterBService.saveLoveLetter(in);
-    }
-
-    @Override
-    public void deleteMyLoveLetter(Map in) throws Exception {
-        iLoveLetterBService.deleteLoveLetter(in);
-    }
 }

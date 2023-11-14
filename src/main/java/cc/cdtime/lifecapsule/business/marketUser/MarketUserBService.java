@@ -4,7 +4,6 @@ import cc.cdtime.lifecapsule.framework.tools.GogoTools;
 import cc.cdtime.lifecapsule.meta.market.entity.MarketUser;
 import cc.cdtime.lifecapsule.meta.market.entity.MarketUserView;
 import cc.cdtime.lifecapsule.middle.marketUser.IMarketUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

@@ -144,6 +144,7 @@ public enum ESTags {
     GET_LOVE_LETTER,
     DELETE_LOVE_LETTER,
     SAVE_LOVE_LETTER,
+    GET_LOVE_LETTER_TRIGGER,
     /**
      * 灵感
      */
@@ -172,5 +173,6 @@ public enum ESTags {
      * Motto
      */
     USER_PUBLISH_MOTTO,
-    USER_ACCESS_DONATE_PAGE
+    USER_ACCESS_DONATE_PAGE,
+    WAIT
 }

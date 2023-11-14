@@ -17,4 +17,6 @@ public class LoveLetterRequest extends Request {
     private String fromName;
     private Date sendDateTime;
     private String searchKey;
+    private String triggerType;
+    private String triggerId;
 }

@@ -3,22 +3,13 @@ package cc.cdtime.lifecapsule.business.noteSend;
 import cc.cdtime.lifecapsule.framework.constant.ESTags;
 import cc.cdtime.lifecapsule.framework.tools.GogoTools;
 import cc.cdtime.lifecapsule.meta.email.entity.UserEmailView;
-import cc.cdtime.lifecapsule.meta.note.entity.NoteView;
 import cc.cdtime.lifecapsule.meta.noteSendLog.entity.NoteSendLog;
 import cc.cdtime.lifecapsule.meta.noteSendLog.entity.NoteSendLogView;
-import cc.cdtime.lifecapsule.meta.recipient.entity.RecipientView;
-import cc.cdtime.lifecapsule.meta.trigger.entity.NoteTrigger;
-import cc.cdtime.lifecapsule.meta.trigger.entity.TriggerView;
 import cc.cdtime.lifecapsule.meta.user.entity.UserView;
-import cc.cdtime.lifecapsule.middle.note.INoteMiddle;
 import cc.cdtime.lifecapsule.middle.noteSend.INoteSendMiddle;
-import cc.cdtime.lifecapsule.middle.recipient.IRecipientMiddle;
 import cc.cdtime.lifecapsule.middle.security.ISecurityMiddle;
-import cc.cdtime.lifecapsule.middle.trigger.ITriggerMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,24 +19,15 @@ import java.util.Map;
 @Service
 public class NoteSendBService implements INoteSendBService {
     private final IUserMiddle iUserMiddle;
-    private final INoteMiddle iNoteMiddle;
     private final INoteSendMiddle iNoteSendMiddle;
     private final ISecurityMiddle iSecurityMiddle;
-    private final IRecipientMiddle iRecipientMiddle;
-    private final ITriggerMiddle iTriggerMiddle;
 
     public NoteSendBService(IUserMiddle iUserMiddle,
-                            INoteMiddle iNoteMiddle,
                             INoteSendMiddle iNoteSendMiddle,
-                            ISecurityMiddle iSecurityMiddle,
-                            IRecipientMiddle iRecipientMiddle,
-                            ITriggerMiddle iTriggerMiddle) {
+                            ISecurityMiddle iSecurityMiddle) {
         this.iUserMiddle = iUserMiddle;
-        this.iNoteMiddle = iNoteMiddle;
         this.iNoteSendMiddle = iNoteSendMiddle;
         this.iSecurityMiddle = iSecurityMiddle;
-        this.iRecipientMiddle = iRecipientMiddle;
-        this.iTriggerMiddle = iTriggerMiddle;
     }
 
     @Override
@@ -322,18 +304,6 @@ public class NoteSendBService implements INoteSendBService {
             String outCode = GogoTools.encryptAESKey(noteSendLogView.getUserEncodeKey(), strAESKey);
             noteSendLogView.setUserEncodeKey(outCode);
         }
-
-        if (noteSendLogView.getRecipientId() != null) {
-            RecipientView recipientView = iRecipientMiddle.getRecipient(noteSendLogView.getRecipientId(), false);
-            noteSendLogView.setRecipientTitle(recipientView.getTitle());
-            noteSendLogView.setToName(recipientView.getToName());
-            noteSendLogView.setFromName(recipientView.getFromName());
-            noteSendLogView.setDescription(recipientView.getDescription());
-            noteSendLogView.setRecipientName(recipientView.getRecipientName());
-            noteSendLogView.setRecipientEmail(recipientView.getEmail());
-            noteSendLogView.setRecipientRemark(recipientView.getRecipientRemark());
-        }
-
         out.put("noteSendLog", noteSendLogView);
 
         return out;

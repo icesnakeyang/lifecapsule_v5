@@ -57,6 +57,11 @@ public interface ITriggerMiddle {
      */
     void updateNoteTrigger(Map qIn) throws Exception;
 
+    /**
+     * 同时修改content和userCode
+     * @param triggerView
+     * @throws Exception
+     */
     void updateNoteTrigger2(TriggerView triggerView) throws Exception;
 
     /**

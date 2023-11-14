@@ -34,12 +34,4 @@ public interface IWebNoteBService {
      * @throws Exception
      */
     void saveMyNoteTags(Map in) throws Exception;
-
-    Map listLoveLetter(Map in) throws Exception;
-
-    Map getLoveLetter(Map in) throws Exception;
-
-    void saveLoveLetter(Map in) throws Exception;
-
-    void deleteMyLoveLetter(Map in) throws Exception;
 }

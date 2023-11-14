@@ -9,5 +9,10 @@ public interface ILoveLetterBService {
 
     void saveLoveLetter(Map in) throws Exception;
 
+    void saveLoveLetterNote(Map in) throws Exception;
+
+    void saveLoveLetterTrigger(Map in) throws Exception;
+
     void deleteLoveLetter(Map in) throws Exception;
+    Map getLoveLetterTrigger(Map in) throws Exception;
 }
