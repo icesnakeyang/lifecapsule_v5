@@ -50,6 +50,7 @@ public class WebTriggerController {
             in.put("toName", request.getToName());
             in.put("encryptKey", request.getEncryptKey());
             in.put("keyToken", request.getKeyToken());
+            in.put("toUserCode", request.getToUserCode());
 
             logMap.put("UserActType", ESTags.USER_CREATE_TRIGGER_INSTANT);
             logMap.put("token", token);

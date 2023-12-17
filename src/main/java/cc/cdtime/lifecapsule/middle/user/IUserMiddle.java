@@ -18,14 +18,8 @@ public interface IUserMiddle {
 
     /**
      * 获取用户简要信息
-     *
-     * @param userid
-     * @param returnNull
-     * @param isLogin
-     * @return
-     * @throws Exception
      */
-    UserView getUserTiny(String userid, Boolean returnNull, Boolean isLogin) throws Exception;
+    UserView getUserTiny(Map qIn, Boolean returnNull, Boolean isLogin) throws Exception;
 
     /**
      * 记录用户登录日志

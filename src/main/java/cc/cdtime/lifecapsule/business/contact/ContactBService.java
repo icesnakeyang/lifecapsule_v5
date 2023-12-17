@@ -3,6 +3,7 @@ package cc.cdtime.lifecapsule.business.contact;
 import cc.cdtime.lifecapsule.framework.tools.GogoTools;
 import cc.cdtime.lifecapsule.meta.contact.entity.Contact;
 import cc.cdtime.lifecapsule.meta.contact.entity.ContactView;
+import cc.cdtime.lifecapsule.meta.email.entity.UserEmailView;
 import cc.cdtime.lifecapsule.meta.user.entity.UserView;
 import cc.cdtime.lifecapsule.middle.contact.IContactMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
@@ -61,7 +62,7 @@ public class ContactBService implements IContactBService {
                         qIn.put("contactName", contactName);
                         cc++;
                     }
-                }else{
+                } else {
                     qIn.put("contactName", contactName);
                     cc++;
                 }
@@ -70,13 +71,13 @@ public class ContactBService implements IContactBService {
                 qIn.put("email", email);
                 cc++;
             }
-            if(remark!=null){
-                if(contactView.getRemark()!=null){
+            if (remark != null) {
+                if (contactView.getRemark() != null) {
                     if (!contactView.getRemark().equals(remark)) {
                         qIn.put("remark", remark);
                         cc++;
                     }
-                }else{
+                } else {
                     qIn.put("remark", remark);
                     cc++;
                 }
@@ -148,5 +149,51 @@ public class ContactBService implements IContactBService {
         ContactView contactView = iContactMiddle.getContact(qIn, false, userView.getUserId());
 
         iContactMiddle.deleteContact(contactId);
+    }
+
+    @Override
+    public Map getToUser(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String toUserKey = in.get("toUserKey").toString();
+
+        Map qIn = new HashMap();
+        qIn.put("token", token);
+        UserView userView = iUserMiddle.getUser(qIn, false, true);
+
+        Map qIn2 = new HashMap();
+        Map userMap = new HashMap();
+        int cc = 0;
+        if (toUserKey != null && !toUserKey.equals("")) {
+            qIn2.put("userCode", toUserKey);
+            UserView user2 = iUserMiddle.getUserTiny(qIn2, true, false);
+            if (user2 != null) {
+                userMap.put("userCode", user2.getUserCode());
+                userMap.put("nickname", user2.getNickname());
+                userMap.put("userId", user2.getUserId());
+                cc++;
+            }
+        }
+        if (cc == 0) {
+            qIn2.put("email", toUserKey);
+            UserEmailView user2 = iUserMiddle.getUserEmail(qIn2, true, null);
+            if (user2 != null) {
+                qIn2 = new HashMap();
+                qIn2.put("userId", user2.getUserId());
+                UserView userView1 = iUserMiddle.getUserTiny(qIn2, true, false);
+                if (userView1 != null) {
+                    userMap.put("nickname", userView1.getNickname());
+                    userMap.put("userCode", userView1.getUserCode());
+                    userMap.put("email", user2.getEmail());
+                    userMap.put("userId", user2.getUserId());
+                }
+            }
+        }
+        if (userMap.size() == 0) {
+            //没有查询到要发送的用户
+            throw new Exception("10086");
+        }
+        Map out = new HashMap();
+        out.put("toUser", userMap);
+        return out;
     }
 }

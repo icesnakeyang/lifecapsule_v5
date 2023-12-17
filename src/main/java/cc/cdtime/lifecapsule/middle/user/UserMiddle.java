@@ -1,5 +1,6 @@
 package cc.cdtime.lifecapsule.middle.user;
 
+import cc.cdtime.lifecapsule.business.common.IUserComBService;
 import cc.cdtime.lifecapsule.framework.constant.ESTags;
 import cc.cdtime.lifecapsule.meta.email.entity.UserEmail;
 import cc.cdtime.lifecapsule.meta.email.entity.UserEmailView;
@@ -53,8 +54,8 @@ public class UserMiddle implements IUserMiddle {
     }
 
     @Override
-    public UserView getUserTiny(String userId, Boolean returnNull, Boolean isLogin) throws Exception {
-        UserView userView = iUserBaseService.getUserBase(userId);
+    public UserView getUserTiny(Map qIn, Boolean returnNull, Boolean isLogin) throws Exception {
+        UserView userView = iUserBaseService.getUserBase(qIn);
         if (userView == null) {
             if (returnNull) {
                 return null;
@@ -154,7 +155,9 @@ public class UserMiddle implements IUserMiddle {
              * 如果有userId，通过userId读取用户
              */
             if (userId != null) {
-                userView = iUserBaseService.getUserBase(userId);
+                Map qIn2 = new HashMap();
+                qIn2.put("userId", userId);
+                userView = iUserBaseService.getUserBase(qIn2);
             } else {
                 /**
                  * 通过email读取用户
@@ -164,7 +167,9 @@ public class UserMiddle implements IUserMiddle {
                     qIn.put("email", email);
                     UserEmailView userEmailView = iUserEmailService.getUserEmail(qIn);
                     if (userEmailView != null) {
-                        userView = iUserBaseService.getUserBase(userEmailView.getUserId());
+                        Map qIn2 = new HashMap();
+                        qIn2.put("userId", userEmailView.getUserId());
+                        userView = iUserBaseService.getUserBase(qIn2);
                     }
                 } else {
                     /**
@@ -182,10 +187,13 @@ public class UserMiddle implements IUserMiddle {
         /**
          * 获取用户基本信息
          */
-        UserView userViewBase = iUserBaseService.getUserBase(userView.getUserId());
+        Map qIn2 = new HashMap();
+        qIn2.put("userId", userView.getUserId());
+        UserView userViewBase = iUserBaseService.getUserBase(qIn2);
         userView.setCreateTime(userViewBase.getCreateTime());
         userView.setNickname(userViewBase.getNickname());
         userView.setLanguage(userViewBase.getLanguage());
+        userView.setUserCode(userViewBase.getUserCode());
         qIn = new HashMap();
         qIn.put("userId", userView.getUserId());
         qIn.put("type", ESTags.TIMER_TYPE_PRIMARY.toString());
@@ -213,11 +221,11 @@ public class UserMiddle implements IUserMiddle {
         /**
          * 获取用户的loginName
          */
-        if(userView.getLoginName()==null){
-            qIn=new HashMap();
+        if (userView.getLoginName() == null) {
+            qIn = new HashMap();
             qIn.put("userId", userView.getUserId());
-            UserView userLoginName=iUserLoginNameService.getLoginName(qIn);
-            if(userLoginName!=null){
+            UserView userLoginName = iUserLoginNameService.getLoginName(qIn);
+            if (userLoginName != null) {
                 userView.setLoginName(userLoginName.getLoginName());
             }
         }

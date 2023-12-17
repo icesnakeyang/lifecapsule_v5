@@ -8,6 +8,7 @@
         <result property="loginName" column="login_name"/>
         <result property="timerPrimary" column="timer_time"/>
         <result property="loginTime" column="login_time"/>
+        <result property="userCode" column="user_code"/>
     </resultMap>
 
     <!--创建一个基本用户账户-->
@@ -16,16 +17,26 @@
             parameterType="cc.cdtime.lifecapsule.meta.user.entity.UserBase">
         insert into user_base
         (user_id, create_time,
-         nickname, language)
+         nickname, language, user_code)
         values (#{userId}, #{createTime},
-                #{nickname}, #{language})
+                #{nickname}, #{language}, #{userCode})
     </insert>
 
     <!--查询用户基础信息-->
-    <select id="getUserBase" parameterType="java.lang.String" resultMap="userMap">
+    <select id="getUserBase" parameterType="map" resultMap="userMap">
         select *
         from user_base
-        where user_id = #{userId}
+        where 1=1
+        <choose>
+            <when test="userId!=null">
+                and user_id = #{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="userCode!=null">
+                and user_code=#{userCode}
+            </when>
+        </choose>
     </select>
 
     <!--查询用户列表-->
@@ -116,6 +127,9 @@
         <set>
             <if test="language!=null">
                 language=#{language},
+            </if>
+            <if test="userCode!=null">
+                user_code=#{userCode},
             </if>
             <if test="nickname!=null">
                 nickname = #{nickname}

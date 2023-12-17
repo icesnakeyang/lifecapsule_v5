@@ -21,18 +21,24 @@ public class WebContactBService implements IWebContactBService {
 
     @Override
     public Map listMyContact(Map in) throws Exception {
-        Map out=iContactBService.listContact(in);
+        Map out = iContactBService.listContact(in);
         return out;
     }
 
     @Override
     public Map getMyContact(Map in) throws Exception {
-        Map out=iContactBService.getContact(in);
+        Map out = iContactBService.getContact(in);
         return out;
     }
 
     @Override
     public void deleteMyContact(Map in) throws Exception {
         iContactBService.deleteContact(in);
+    }
+
+    @Override
+    public Map getToUser(Map in) throws Exception {
+        Map out = iContactBService.getToUser(in);
+        return out;
     }
 }

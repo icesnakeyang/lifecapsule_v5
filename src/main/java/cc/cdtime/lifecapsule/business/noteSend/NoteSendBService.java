@@ -151,7 +151,9 @@ public class NoteSendBService implements INoteSendBService {
             Map log = new HashMap();
             log.put("title", views.get(i).getTitle());
             log.put("sendUserId", views.get(i).getSendUserId());
-            UserView sender = iUserMiddle.getUserTiny(views.get(i).getSendUserId(), false, false);
+            Map qIn2 = new HashMap();
+            qIn2.put("userId", views.get(i).getSendUserId());
+            UserView sender = iUserMiddle.getUserTiny(qIn2, false, false);
             log.put("sendUserId", sender.getUserId());
             log.put("sendUserNickname", sender.getNickname());
             log.put("sendTime", views.get(i).getSendTime());
@@ -163,9 +165,9 @@ public class NoteSendBService implements INoteSendBService {
                 if (views.get(i).getTriggerType().equals(ESTags.REPLY_SEND_LOG.toString())) {
                     //读取上级笔记信息
                     if (views.get(i).getRefPid() != null) {
-                        Map qIn2 = new HashMap();
-                        qIn2.put("sendLogId", views.get(i).getRefPid());
-                        NoteSendLogView noteSendLogView = iNoteSendMiddle.getNoteSendLog(qIn2, false, null);
+                        Map qIn3 = new HashMap();
+                        qIn3.put("sendLogId", views.get(i).getRefPid());
+                        NoteSendLogView noteSendLogView = iNoteSendMiddle.getNoteSendLog(qIn3, false, null);
                         log.put("reTitle", noteSendLogView.getTitle());
                     }
                 }
@@ -261,7 +263,7 @@ public class NoteSendBService implements INoteSendBService {
             String outCode = GogoTools.encryptAESKey(noteSendLogView.getUserEncodeKey(), strAESKey);
             noteMap.put("userEncodeKey", outCode);
         }
-        noteMap.put("fromName",noteSendLogView.getFromName());
+        noteMap.put("fromName", noteSendLogView.getFromName());
 
         return noteMap;
     }

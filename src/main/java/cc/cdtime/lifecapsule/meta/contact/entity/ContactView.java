@@ -12,4 +12,5 @@ public class ContactView {
     private String phone;
     private String email;
     private String remark;
+    private String userCode;
 }

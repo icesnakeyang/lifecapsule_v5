@@ -6,6 +6,7 @@
         <result property="contactId" column="contact_id"/>
         <result property="userId" column="user_id"/>
         <result property="contactName" column="contact_name"/>
+        <result property="userCode" column="user_code"/>
     </resultMap>
 
     <!--创建一个联系人-->
@@ -15,10 +16,10 @@
         insert into contact
         (contact_id, user_id,
          contact_name, phone,
-         email)
+         email, user_code)
         values (#{contactId}, #{userId},
                 #{contactName}, #{phone},
-                #{email})
+                #{email}, #{userCode})
     </insert>
 
     <insert id="createContactRemark"
@@ -77,6 +78,11 @@
         <choose>
             <when test="userId!=null">
                 and user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="userCode!=null">
+                and user_code=#{userCode}
             </when>
         </choose>
     </select>

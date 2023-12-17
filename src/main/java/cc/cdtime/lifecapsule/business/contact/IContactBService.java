@@ -34,4 +34,6 @@ public interface IContactBService {
      * @throws Exception
      */
     void deleteContact(Map in) throws Exception;
+
+    Map getToUser(Map in) throws Exception;
 }

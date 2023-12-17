@@ -149,6 +149,18 @@ public class UserAccountBService implements IUserAccountBService {
         user.put("registerTime", userView.getCreateTime());
         user.put("nickname", userView.getNickname());
         user.put("email", userView.getEmail());
+        if (userView.getUserCode() == null) {
+            //没有usercode，创建一个
+            String theCode = iUserComBService.takeUniqueUserCode();
+            if (theCode != null) {
+                Map qIn3 = new HashMap();
+                qIn3.put("userId", userView.getUserId());
+                qIn3.put("userCode", theCode);
+                iUserMiddle.updateUserBase(qIn3);
+                userView.setUserCode(theCode);
+            }
+        }
+        user.put("userCode", userView.getUserCode());
 
         /**
          * 用户状态为USER_GUEST
@@ -700,6 +712,10 @@ public class UserAccountBService implements IUserAccountBService {
         userBase.setCreateTime(new Date());
         //生成一个随机的用户昵称
         userBase.setNickname(GogoTools.generateString(8));
+        String theCode = iUserComBService.takeUniqueUserCode();
+        if (theCode != null) {
+            userBase.setUserCode(theCode);
+        }
         iUserMiddle.createUserBase(userBase);
 
         /**

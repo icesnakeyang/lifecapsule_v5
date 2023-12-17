@@ -35,4 +35,6 @@ public interface IWebContactBService {
      * @throws Exception
      */
     void deleteMyContact(Map in) throws Exception;
+
+    Map getToUser(Map in) throws Exception;
 }

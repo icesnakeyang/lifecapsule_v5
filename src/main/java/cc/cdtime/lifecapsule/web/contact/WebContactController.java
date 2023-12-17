@@ -145,4 +145,37 @@ public class WebContactController {
         }
         return response;
     }
+
+    /**
+     * 查询一个用户用于发送笔记
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getToUser")
+    public Response getToUser(@RequestBody ContactRequest request,
+                              HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("toUserKey", request.getToUserKey());
+
+            Map out = iWebContactBService.getToUser(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                log.error("Web user getToUser error:" + ex.getMessage());
+            }
+        }
+        return response;
+    }
+
+
 }

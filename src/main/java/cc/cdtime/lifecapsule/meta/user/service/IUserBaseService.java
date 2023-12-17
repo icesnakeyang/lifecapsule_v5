@@ -16,11 +16,8 @@ public interface IUserBaseService {
 
     /**
      * 查询用户基础信息
-     *
-     * @param userId
-     * @return
      */
-    UserView getUserBase(String userId) throws Exception;
+    UserView getUserBase(Map qIn) throws Exception;
 
     /**
      * @param qIn 查询用户列表

@@ -14,4 +14,8 @@ public class UserBase {
     private Date createTime;
     private String nickname;
     private String language;
+    /**
+     * user unique code
+     */
+    private String userCode;
 }

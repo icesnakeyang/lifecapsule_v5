@@ -22,8 +22,8 @@ public class UserBaseService implements IUserBaseService {
     }
 
     @Override
-    public UserView getUserBase(String userId) throws Exception {
-        UserView userView = userBaseDao.getUserBase(userId);
+    public UserView getUserBase(Map qIn) throws Exception {
+        UserView userView = userBaseDao.getUserBase(qIn);
         return userView;
     }
 

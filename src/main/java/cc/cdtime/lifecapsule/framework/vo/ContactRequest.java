@@ -9,4 +9,5 @@ public class ContactRequest extends Request{
     private String phone;
     private String email;
     private String remark;
+    private String toUserKey;
 }

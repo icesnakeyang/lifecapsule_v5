@@ -18,11 +18,8 @@ public interface UserBaseDao {
 
     /**
      * 查询用户基础信息
-     *
-     * @param userId
-     * @return
      */
-    UserView getUserBase(String userId);
+    UserView getUserBase(Map qIn);
 
     /**
      * @param qIn 查询用户列表

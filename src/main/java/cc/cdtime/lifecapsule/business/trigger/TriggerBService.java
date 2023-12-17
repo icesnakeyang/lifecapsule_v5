@@ -450,6 +450,7 @@ public class TriggerBService implements ITriggerBService {
         String encryptKey = (String) in.get("encryptKey");
         String keyToken = (String) in.get("keyToken");
         Date sendTime = (Date) in.get("sendTime");
+        String toUserCode = (String) in.get("toUserCode");
 
         /**
          * 首先，通过token读取当前用户信息
@@ -463,44 +464,92 @@ public class TriggerBService implements ITriggerBService {
          */
         NoteView noteView = iNoteMiddle.getNoteDetail(noteId, false, userView.getUserId());
 
-        /**
-         * 查询要发送的email是否存在
-         */
-        qIn = new HashMap();
-        qIn.put("email", toEmail);
-        UserEmailView userEmailView = iUserMiddle.getUserEmail(qIn, true, null);
+        int cc = 0;
         String toUserId = null;
-        if (userEmailView == null) {
-            //发送的email还没有注册为用户
-            //没有用户信息，不能发送站内信
-            //检查email是否有效，如果无效就停止创建trigger
-            if(!GogoTools.checkEmail(toEmail)){
-                //无效
-                throw new Exception("10084");
+        if (toUserCode != null && !toUserCode.equals("")) {
+            /**
+             * 通过userCode查询接受人Id
+             */
+            Map qIn2 = new HashMap();
+            qIn2.put("userCode", toUserCode);
+            UserView userView1 = iUserMiddle.getUserTiny(qIn2, true, false);
+            if (userView1 != null) {
+                toUserId = userView1.getUserId();
+                cc++;
+
+                /**
+                 * 查询要发送的user code，是否在当前用户的联系人表里
+                 * 没有就添加一个
+                 */
+                qIn = new HashMap();
+                qIn.put("userCode", toUserCode);
+                qIn.put("userId", userView.getUserId());
+                ContactView contactView = iContactMiddle.getContact(qIn, true, null);
+                if (contactView == null) {
+                    /**
+                     * 创建联系人
+                     */
+                    Contact contact = new Contact();
+                    contact.setContactId(GogoTools.UUID32());
+                    contact.setEmail(toEmail);
+                    contact.setUserId(userView.getUserId());
+                    contact.setContactName(toName);
+                    contact.setUserCode(toUserCode);
+                    iContactMiddle.createContact(contact);
+                }
             }
-        } else {
-            toUserId = userEmailView.getUserId();
-            //查到用户信息，可以发送站内信
+        }
+        if (toEmail != null && !toEmail.equals("")) {
+            /**
+             * 通过Email发送
+             */
+            /**
+             * 查询要发送的email是否存在
+             */
+            qIn = new HashMap();
+            qIn.put("email", toEmail);
+            UserEmailView userEmailView = iUserMiddle.getUserEmail(qIn, true, null);
+
+            if (userEmailView == null) {
+                //发送的email还没有注册为用户
+                //没有用户信息，不能发送站内信
+                //检查email是否有效，如果无效就停止创建trigger
+                if (!GogoTools.checkEmail(toEmail)) {
+                    //无效
+                    throw new Exception("10084");
+                } else {
+                    //email有效，可以发送
+                    cc++;
+                }
+            } else {
+                toUserId = userEmailView.getUserId();
+                //查到用户信息，可以发送站内信
+                cc++;
+            }
+            /**
+             * 查询要发送的email，是否在当前用户的联系人表里
+             * 没有就添加一个
+             */
+            qIn = new HashMap();
+            qIn.put("email", toEmail);
+            qIn.put("userId", userView.getUserId());
+            ContactView contactView = iContactMiddle.getContact(qIn, true, null);
+            if (contactView == null) {
+                /**
+                 * 创建联系人
+                 */
+                Contact contact = new Contact();
+                contact.setContactId(GogoTools.UUID32());
+                contact.setEmail(toEmail);
+                contact.setUserId(userView.getUserId());
+                contact.setContactName(toName);
+                iContactMiddle.createContact(contact);
+            }
         }
 
-        /**
-         * 查询要发送的email，是否在当前用户的联系人表里
-         * 没有就添加一个
-         */
-        qIn = new HashMap();
-        qIn.put("email", toEmail);
-        qIn.put("userId", userView.getUserId());
-        ContactView contactView = iContactMiddle.getContact(qIn, true, null);
-        if (contactView == null) {
-            /**
-             * 创建联系人
-             */
-            Contact contact = new Contact();
-            contact.setContactId(GogoTools.UUID32());
-            contact.setEmail(toEmail);
-            contact.setUserId(userView.getUserId());
-            contact.setContactName(toName);
-            iContactMiddle.createContact(contact);
+        if(cc==0){
+            //没有有效的发送对象
+            throw new Exception("10085");
         }
 
         /**

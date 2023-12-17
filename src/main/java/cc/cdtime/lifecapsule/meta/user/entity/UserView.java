@@ -30,4 +30,5 @@ public class UserView {
     private String userInfoLogId;
     private String status;
     private String language;
+    private String userCode;
 }
