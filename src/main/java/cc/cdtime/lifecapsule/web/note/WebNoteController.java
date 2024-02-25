@@ -1,9 +1,8 @@
 package cc.cdtime.lifecapsule.web.note;
 
-import cc.cdtime.lifecapsule.app.lastWords.LastWordsRequest;
-import cc.cdtime.lifecapsule.app.loveLetter.LoveLetterRequest;
 import cc.cdtime.lifecapsule.framework.common.ICommonService;
 import cc.cdtime.lifecapsule.framework.constant.ESTags;
+import cc.cdtime.lifecapsule.framework.vo.HistoryRequest;
 import cc.cdtime.lifecapsule.framework.vo.NoteRequest;
 import cc.cdtime.lifecapsule.framework.vo.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -111,6 +110,7 @@ public class WebNoteController {
             in.put("title", request.getTitle());
             in.put("content", request.getContent());
             in.put("tagList", request.getTagList());
+            in.put("pid", request.getPid());
 
             Map out = iWebNoteBService.saveMyNote(in);
             response.setData(out);
@@ -206,6 +206,39 @@ public class WebNoteController {
             } catch (Exception ex2) {
                 response.setCode(10001);
                 log.error("Web saveMyNoteTags error:" + ex.getMessage());
+            }
+        }
+        return response;
+    }
+
+    /**
+     * load note full data information
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/loadNoteAllData")
+    public Response loadNoteAllData(@RequestBody NoteRequest request,
+                                    HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("noteId", request.getNoteId());
+            in.put("encryptKey", request.getEncryptKey());
+            in.put("keyToken", request.getKeyToken());
+
+            Map out = iWebNoteBService.loadNoteAllData(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                log.error("Web loadNoteAllData error:" + ex.getMessage());
             }
         }
         return response;

@@ -174,5 +174,6 @@ public enum ESTags {
      */
     USER_PUBLISH_MOTTO,
     USER_ACCESS_DONATE_PAGE,
-    WAIT
+    WAIT,
+    NOTE
 }

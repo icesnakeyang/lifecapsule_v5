@@ -81,6 +81,9 @@ public class ReplyNoteBService implements IReplyNoteBService {
         noteInfo.setContent(content);
         noteInfo.setUserEncodeKey(strAESKey);
         noteInfo.setUserId(userView.getUserId());
+        /**
+         * 回复时创建的笔记，其pid就是接受到的note_send_log的send_log_id
+         */
         noteInfo.setPid(pid);
         iNoteMiddle.createNoteInfo(noteInfo);
 

@@ -4,14 +4,17 @@ import cc.cdtime.lifecapsule.framework.constant.ESTags;
 import cc.cdtime.lifecapsule.framework.tools.GogoTools;
 import cc.cdtime.lifecapsule.meta.note.entity.NoteInfo;
 import cc.cdtime.lifecapsule.meta.note.entity.NoteView;
+import cc.cdtime.lifecapsule.meta.noteSendLog.entity.NoteSendLogView;
 import cc.cdtime.lifecapsule.meta.tag.entity.TagBase;
 import cc.cdtime.lifecapsule.meta.tag.entity.TagNote;
 import cc.cdtime.lifecapsule.meta.tag.entity.TagView;
 import cc.cdtime.lifecapsule.meta.user.entity.UserView;
 import cc.cdtime.lifecapsule.middle.note.INoteMiddle;
+import cc.cdtime.lifecapsule.middle.noteSend.INoteSendMiddle;
 import cc.cdtime.lifecapsule.middle.security.ISecurityMiddle;
 import cc.cdtime.lifecapsule.middle.tag.ITagMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,15 +29,18 @@ public class NoteBService implements INoteBService {
     private final INoteMiddle iNoteMiddle;
     private final ISecurityMiddle iSecurityMiddle;
     private final ITagMiddle iTagMiddle;
+    private final INoteSendMiddle iNoteSendMiddle;
 
     public NoteBService(IUserMiddle iUserMiddle,
                         INoteMiddle iNoteMiddle,
                         ISecurityMiddle iSecurityMiddle,
-                        ITagMiddle iTagMiddle) {
+                        ITagMiddle iTagMiddle,
+                        INoteSendMiddle iNoteSendMiddle) {
         this.iUserMiddle = iUserMiddle;
         this.iNoteMiddle = iNoteMiddle;
         this.iSecurityMiddle = iSecurityMiddle;
         this.iTagMiddle = iTagMiddle;
+        this.iNoteSendMiddle = iNoteSendMiddle;
     }
 
     @Override
@@ -149,6 +155,7 @@ public class NoteBService implements INoteBService {
         Boolean encrypt = (Boolean) in.get("encrypt");
         String keyToken = (String) in.get("keyToken");
         ArrayList tagList = (ArrayList) in.get("tagList");
+        String pid = (String) in.get("pid");
 
         /**
          * 根据keyToken读取私钥
@@ -167,6 +174,19 @@ public class NoteBService implements INoteBService {
         Map qIn = new HashMap();
         qIn.put("token", token);
         UserView userView = iUserMiddle.getUserLogin(qIn, false);
+
+        if (pid != null) {
+            NoteView pNote = iNoteMiddle.getNoteTiny(pid, true, null);
+            if (pNote == null) {
+                // 父笔记不存在
+                throw new Exception("10087");
+            }
+            if (!pNote.getUserId().equals(userView.getUserId())) {
+                //父笔记不是自己的笔记
+                throw new Exception("10088");
+            }
+
+        }
         in.put("userId", userView.getUserId());
         if (noteId == null) {
             /**
@@ -349,12 +369,113 @@ public class NoteBService implements INoteBService {
         }
     }
 
+    @Override
+    public Map loadNoteAllData(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String noteId = in.get("noteId").toString();
+        String encryptKey = (String) in.get("encryptKey");
+        String keyToken = (String) in.get("keyToken");
+
+        /**
+         * 获取一个笔记的所有详情信息
+         */
+
+        Map qIn = new HashMap();
+        qIn.put("token", token);
+        UserView userView = iUserMiddle.getUser(qIn, false, true);
+
+        Map out = new HashMap();
+
+        /**
+         * 笔记详情
+         */
+        NoteView noteView = iNoteMiddle.getNoteDetail(noteId, false, userView.getUserId());
+
+        /**
+         * 获取用户临时上传的加密笔记AES秘钥的AES秘钥
+         */
+        String strAESKey = null;
+        if (keyToken != null) {
+            strAESKey = iSecurityMiddle.takeNoteAES(keyToken, encryptKey);
+        }
+        if (strAESKey == null) {
+            //查询秘钥错误
+            throw new Exception("10037");
+        }
+        if (noteView.getUserEncodeKey() != null) {
+            String data = noteView.getUserEncodeKey();
+            //用AES秘钥加密笔记内容的AES秘钥
+            String outCode = GogoTools.encryptAESKey(data, strAESKey);
+            noteView.setUserEncodeKey(outCode);
+        } else {
+            noteView.setUserEncodeKey(null);
+        }
+        out.put("noteDetail", noteView);
+
+        /**
+         * 父笔记detail
+         */
+        if (noteView.getPid() != null) {
+            NoteView noteParent = noteParent = iNoteMiddle.getNoteDetail(noteView.getPid(), true, null);
+            if (noteParent == null) {
+                qIn = new HashMap();
+                qIn.put("sendLogId", noteView.getPid());
+                NoteSendLogView noteSendLogView = iNoteSendMiddle.getNoteSendLog(qIn, true, null);
+                if (noteSendLogView.getUserEncodeKey() != null) {
+                    String data = noteSendLogView.getUserEncodeKey();
+                    //用AES秘钥加密笔记内容的AES秘钥
+                    String outCode = GogoTools.encryptAESKey(data, strAESKey);
+                    noteSendLogView.setUserEncodeKey(outCode);
+                } else {
+                    noteSendLogView.setUserEncodeKey(null);
+                }
+                Map map=new HashMap();
+                map.put("sendLogId", noteSendLogView.getSendLogId());
+                map.put("sendTime", noteSendLogView.getSendTime());
+                map.put("title", noteSendLogView.getTitle());
+                map.put("toEmail", noteSendLogView.getToEmail());
+                map.put("toName", noteSendLogView.getToName());
+                map.put("triggerType", noteSendLogView.getTriggerType());
+                map.put("readTime", noteSendLogView.getReadTime());
+                map.put("fromName", noteSendLogView.getFromName());
+                map.put("noteType", ESTags.NOTE_SEND_LOG);
+                out.put("noteParent", map);
+            } else {
+                if (noteParent.getUserEncodeKey() != null) {
+                    String data = noteParent.getUserEncodeKey();
+                    //用AES秘钥加密笔记内容的AES秘钥
+                    String outCode = GogoTools.encryptAESKey(data, strAESKey);
+                    noteParent.setUserEncodeKey(outCode);
+                } else {
+                    noteParent.setUserEncodeKey(null);
+                }
+                out.put("noteParent", noteParent);
+            }
+        }
+        /**
+         * 子笔记树列表
+         */
+        qIn = new HashMap();
+        qIn.put("pid", noteView.getNoteId());
+        ArrayList<NoteView> noteChild = iNoteMiddle.listHistoryNote(qIn);
+        out.put("child", noteChild);
+        /**
+         * 触发器列表
+         */
+
+        /**
+         * 接收事件
+         */
+        return out;
+    }
+
     private String createNote(Map in) throws Exception {
         String content = in.get("content").toString();
         String userId = in.get("userId").toString();
         String strAESKey = (String) in.get("strAESKey");
         String title = (String) in.get("title");
         Boolean encrypt = (Boolean) in.get("encrypt");
+        String pid = (String) in.get("pid");
 
         NoteInfo noteInfo = new NoteInfo();
         noteInfo.setNoteId(GogoTools.UUID32());
@@ -369,6 +490,7 @@ public class NoteBService implements INoteBService {
         noteInfo.setStatus(ESTags.ACTIVE.toString());
         noteInfo.setUserId(userId);
         noteInfo.setTitle(title);
+        noteInfo.setPid(pid);
         iNoteMiddle.createNoteInfo(noteInfo);
         return noteInfo.getNoteId();
     }
@@ -383,6 +505,7 @@ public class NoteBService implements INoteBService {
         String userId = in.get("userId").toString();
         String strAESKey = (String) in.get("strAESKey");
         Boolean encrypt = (Boolean) in.get("encrypt");
+        String pid = (String) in.get("pid");
 
         /**
          * 读取笔记信息，检查笔记是否存在，是否是用户本人的笔记
@@ -427,6 +550,7 @@ public class NoteBService implements INoteBService {
         }
 
         qInEdit.put("noteId", noteId);
+        qInEdit.put("pid", pid);
         iNoteMiddle.updateNoteInfo(qInEdit);
     }
 

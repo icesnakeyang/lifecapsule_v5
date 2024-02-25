@@ -34,4 +34,6 @@ public interface INoteBService {
 
 
     void saveMyNoteTags(Map in) throws Exception;
+
+    Map loadNoteAllData(Map in) throws Exception;
 }

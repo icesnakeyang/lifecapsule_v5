@@ -1,17 +1,15 @@
 package cc.cdtime.lifecapsule.middle.note;
 
-import cc.cdtime.lifecapsule.framework.tools.GogoTools;
 import cc.cdtime.lifecapsule.meta.content.entity.Content;
 import cc.cdtime.lifecapsule.meta.content.service.IContentService;
 import cc.cdtime.lifecapsule.meta.note.entity.NoteInfo;
 import cc.cdtime.lifecapsule.meta.note.entity.NoteView;
 import cc.cdtime.lifecapsule.meta.note.service.INoteService;
-import cc.cdtime.lifecapsule.meta.tag.entity.TagView;
+import cc.cdtime.lifecapsule.meta.noteSendLog.service.INoteSendService;
 import cc.cdtime.lifecapsule.meta.tag.service.ITagService;
 import cc.cdtime.lifecapsule.meta.user.entity.UserEncodeKey;
 import cc.cdtime.lifecapsule.meta.user.entity.UserEncodeKeyView;
 import cc.cdtime.lifecapsule.meta.user.service.IUserEncodeKeyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +23,19 @@ public class NoteMiddle implements INoteMiddle {
     private final INoteService iNoteService;
     private final IUserEncodeKeyService iUserEncodeKeyService;
     private final IContentService iContentService;
+    private final INoteSendService iNoteSendService;
     private final ITagService iTagService;
 
     public NoteMiddle(INoteService iNoteService,
                       IUserEncodeKeyService iUserEncodeKeyService,
                       IContentService iContentService,
-                      ITagService iTagService) {
+                      ITagService iTagService,
+                      INoteSendService iNoteSendService) {
         this.iNoteService = iNoteService;
         this.iUserEncodeKeyService = iUserEncodeKeyService;
         this.iContentService = iContentService;
         this.iTagService = iTagService;
+        this.iNoteSendService = iNoteSendService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -73,6 +74,9 @@ public class NoteMiddle implements INoteMiddle {
         /**
          * 读取详情
          */
+        if (noteView == null) {
+            return null;
+        }
         Map qIn = new HashMap();
         Content content = iContentService.getContent(noteView.getNoteId());
         if (content != null) {

@@ -212,9 +212,9 @@
             <when test="noteType!=null">
                 and note_type=#{noteType}
             </when>
-            <otherwise>
-                and note_type is null
-            </otherwise>
+<!--            <otherwise>-->
+<!--                and note_type is null-->
+<!--            </otherwise>-->
         </choose>
         order by random() limit #{size}
     </select>

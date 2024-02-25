@@ -55,4 +55,10 @@ public class WebNoteBService implements IWebNoteBService {
     public void saveMyNoteTags(Map in) throws Exception {
         iNoteBService.saveMyNoteTags(in);
     }
+
+    @Override
+    public Map loadNoteAllData(Map in) throws Exception {
+        Map out = iNoteBService.loadNoteAllData(in);
+        return out;
+    }
 }
