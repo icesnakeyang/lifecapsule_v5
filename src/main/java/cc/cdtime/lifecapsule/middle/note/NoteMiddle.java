@@ -6,6 +6,7 @@ import cc.cdtime.lifecapsule.meta.note.entity.NoteInfo;
 import cc.cdtime.lifecapsule.meta.note.entity.NoteView;
 import cc.cdtime.lifecapsule.meta.note.service.INoteService;
 import cc.cdtime.lifecapsule.meta.noteSendLog.service.INoteSendService;
+import cc.cdtime.lifecapsule.meta.tag.entity.TagView;
 import cc.cdtime.lifecapsule.meta.tag.service.ITagService;
 import cc.cdtime.lifecapsule.meta.user.entity.UserEncodeKey;
 import cc.cdtime.lifecapsule.meta.user.entity.UserEncodeKeyView;
@@ -96,6 +97,14 @@ public class NoteMiddle implements INoteMiddle {
         } else {
 
         }
+
+        /**
+         * read tag list
+         */
+        qIn = new HashMap();
+        qIn.put("noteId", noteView.getNoteId());
+        ArrayList<TagView> tagViews = iTagService.listNoteTag(qIn);
+        noteView.setTagList(tagViews);
         return noteView;
     }
 

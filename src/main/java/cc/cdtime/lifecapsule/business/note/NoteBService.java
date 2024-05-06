@@ -71,6 +71,16 @@ public class NoteBService implements INoteBService {
         }
         ArrayList<NoteView> noteViews = iNoteMiddle.listNote(qIn);
         Integer total = iNoteMiddle.totalNote(qIn);
+
+        for (int i = 0; i < noteViews.size(); i++) {
+            NoteView note = noteViews.get(i);
+            qIn = new HashMap();
+            qIn.put("noteId", note.getNoteId());
+            ArrayList<TagView> tagViews = iTagMiddle.listNoteTag(qIn);
+            note.setTagList(tagViews);
+            noteViews.set(i, note);
+        }
+
         Map out = new HashMap();
         out.put("noteList", noteViews);
         out.put("totalNote", total);
@@ -429,7 +439,7 @@ public class NoteBService implements INoteBService {
                 } else {
                     noteSendLogView.setUserEncodeKey(null);
                 }
-                Map map=new HashMap();
+                Map map = new HashMap();
                 map.put("sendLogId", noteSendLogView.getSendLogId());
                 map.put("sendTime", noteSendLogView.getSendTime());
                 map.put("title", noteSendLogView.getTitle());
