@@ -47,30 +47,42 @@ public class EmailToolService implements IEmailToolService {
 
         String to = userEmail;
         String from = "support@tellmeafter.com";
-        String username = "info@tellmeafter.com";
-        String password = "+QWtSPX.]?Me";
-        String host = "mail.tellmeafter.com";
+//        String username = "info@tellmeafter.com";
+//        String password = "+QWtSPX.]?Me";
+//        String host = "mail.tellmeafter.com";
+//
+//        Properties props = new Properties();
+//        props.put("mail.smtp.auth", "true");
+//        props.put("mail.smtp.starttls.enable", "true");
+//        props.put("mail.smtp.host", host);
+//        props.put("mail.smtp.port", "26");
+//        props.put("mail.smtp.ssl.enable", "false");
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", "26");
-        props.put("mail.smtp.ssl.enable", "false");
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
 
 //        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 
-        Authenticator authenticator=new Authenticator(){
-            protected PasswordAuthentication getPasswordAuthentication(){
-                return new PasswordAuthentication(username, password);
-            }
-        };
-        Session session=Session.getInstance(props, authenticator);
+//        Authenticator authenticator=new Authenticator(){
+//            protected PasswordAuthentication getPasswordAuthentication(){
+//                return new PasswordAuthentication(username, password);
+//            }
+//        };
+//        Session session=Session.getInstance(props, authenticator);
 //        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 //            protected PasswordAuthentication getPasswordAuthentication() {
 //                return new PasswordAuthentication(username, password);
 //            }
 //        });
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("cdtime117@gmail.com", "qvbh akoe fapx lbnn");
+            }
+        });
 
         session.setDebug(false);
 
