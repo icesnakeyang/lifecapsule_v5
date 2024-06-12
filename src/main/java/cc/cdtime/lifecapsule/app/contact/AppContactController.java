@@ -2,11 +2,11 @@ package cc.cdtime.lifecapsule.app.contact;
 
 import cc.cdtime.lifecapsule.framework.vo.ContactRequest;
 import cc.cdtime.lifecapsule.framework.vo.Response;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 

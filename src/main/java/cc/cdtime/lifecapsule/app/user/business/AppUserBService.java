@@ -7,7 +7,6 @@ import cc.cdtime.lifecapsule.framework.constant.ESTags;
 import cc.cdtime.lifecapsule.framework.tools.GogoTools;
 import cc.cdtime.lifecapsule.meta.user.entity.*;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

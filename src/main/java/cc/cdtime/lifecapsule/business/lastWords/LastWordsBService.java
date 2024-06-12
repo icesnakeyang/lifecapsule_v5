@@ -11,11 +11,9 @@ import cc.cdtime.lifecapsule.middle.note.INoteMiddle;
 import cc.cdtime.lifecapsule.middle.security.ISecurityMiddle;
 import cc.cdtime.lifecapsule.middle.trigger.ITriggerMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

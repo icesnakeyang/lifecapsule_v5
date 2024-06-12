@@ -2,10 +2,10 @@ package cc.cdtime.lifecapsule.web.noteSend;
 
 import cc.cdtime.lifecapsule.framework.vo.NoteSendRequest;
 import cc.cdtime.lifecapsule.framework.vo.Response;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 

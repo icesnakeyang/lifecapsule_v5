@@ -15,7 +15,6 @@ import cc.cdtime.lifecapsule.middle.note.INoteMiddle;
 import cc.cdtime.lifecapsule.middle.tag.ITagMiddle;
 import cc.cdtime.lifecapsule.middle.topic.ITopicMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

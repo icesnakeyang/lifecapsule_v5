@@ -2,10 +2,10 @@ package cc.cdtime.lifecapsule.app.tag;
 
 import cc.cdtime.lifecapsule.framework.vo.Response;
 import cc.cdtime.lifecapsule.framework.vo.TagRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 

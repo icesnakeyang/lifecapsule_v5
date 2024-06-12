@@ -8,7 +8,6 @@ import cc.cdtime.lifecapsule.meta.motto.entity.MottoView;
 import cc.cdtime.lifecapsule.meta.user.entity.UserView;
 import cc.cdtime.lifecapsule.middle.motto.IMottoMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

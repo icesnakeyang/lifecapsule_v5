@@ -11,7 +11,6 @@ import cc.cdtime.lifecapsule.middle.note.INoteMiddle;
 import cc.cdtime.lifecapsule.middle.security.ISecurityMiddle;
 import cc.cdtime.lifecapsule.middle.trigger.ITriggerMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.quartz.Trigger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

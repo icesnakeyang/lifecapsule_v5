@@ -3,10 +3,10 @@ package cc.cdtime.lifecapsule.admin.topic;
 import cc.cdtime.lifecapsule.business.adminTopic.IAdminTopicBService;
 import cc.cdtime.lifecapsule.framework.vo.Response;
 import cc.cdtime.lifecapsule.framework.vo.TopicRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 

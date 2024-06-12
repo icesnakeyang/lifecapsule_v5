@@ -6,7 +6,6 @@ import cc.cdtime.lifecapsule.meta.timer.entity.UserTimerLog;
 import cc.cdtime.lifecapsule.meta.user.entity.UserView;
 import cc.cdtime.lifecapsule.middle.timer.ITimerMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

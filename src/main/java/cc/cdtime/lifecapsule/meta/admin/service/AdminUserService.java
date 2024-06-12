@@ -13,11 +13,8 @@ import java.util.Map;
 
 @Service
 public class AdminUserService implements IAdminUserService {
-    private final AdminUserDao adminUserDao;
-
-    public AdminUserService(AdminUserDao adminUserDao) {
-        this.adminUserDao = adminUserDao;
-    }
+    @Autowired
+    private AdminUserDao adminUserDao;
 
     @Override
     public void createAdminUser(AdminUser adminUser) throws Exception {

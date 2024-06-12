@@ -7,11 +7,9 @@ import cc.cdtime.lifecapsule.meta.email.entity.EmailLog;
 import cc.cdtime.lifecapsule.meta.email.entity.UserEmailView;
 import cc.cdtime.lifecapsule.middle.email.IEmailMiddle;
 import cc.cdtime.lifecapsule.middle.user.IUserMiddle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
